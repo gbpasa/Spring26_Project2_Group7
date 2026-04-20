@@ -7,6 +7,20 @@ library(summarytools)
 
 ### Display summary statistics of the quantitative variables: AGEP_A, WEIGHTLBTC_A, and HEIGHTTC_A
 lapply(nhis_clean[c("AGEP_A", "WEIGHTLBTC_A", "HEIGHTTC_A")], descr)
+summary(nhis_clean$AGEP_A)
+mean(nhis_clean$AGEP_A)
+median(nhis_clean$AGEP_A)
+sd(nhis_clean$AGEP_A)
+
+summary(nhis_clean$WEIGHTLBTC_A)
+mean(nhis_clean$WEIGHTLBTC_A)
+median(nhis_clean$WEIGHTLBTC_A)
+sd(nhis_clean$WEIGHTLBTC_A)
+
+summary(nhis_clean$HEIGHTTC_A)
+mean(nhis_clean$HEIGHTTC_A)
+median(nhis_clean$HEIGHTTC_A)
+sd(nhis_clean$HEIGHTTC_A)
 
 
 ### Create base R and ggplot2 histograms of AGEP_A
