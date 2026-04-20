@@ -1,15 +1,17 @@
 # Univariate & Bivariate Analysis & Visualization
 
-attach(nhis_clean)
+library(tidyverse)
+library(summarytools)
 
 ## Quantitative Variables
 
 ### Display summary statistics of the quantitative variables: AGEP_A, WEIGHTLBTC_A, and HEIGHTTC_A
 lapply(nhis_clean[c("AGEP_A", "WEIGHTLBTC_A", "HEIGHTTC_A")], descr)
 
+
 ### Create base R and ggplot2 histograms of AGEP_A
 hist(
-  AGEP_A,
+  nhis_clean$AGEP_A,
   main = "Distribution of Age Across Participants",
   col = "lightgreen",
   xlab = "Age in Years",
@@ -26,7 +28,7 @@ ggplot(nhis_clean, aes(x = AGEP_A)) +
   theme_classic()
 
 ### Create base R and ggplot2 boxplots of AGEP_A
-boxplot(AGEP_A,
+boxplot(nhis_clean$AGEP_A,
         main = "Distribution of Age Across Participants",
         col = "yellow",
         ylab = "Age in Years")
@@ -41,7 +43,7 @@ ggplot(nhis_clean, aes(y = AGEP_A)) +
 
 ### Create base r and ggplot2 histograms of WEIGHTLBTC_A
 hist(
-  WEIGHTLBTC_A,
+  nhis_clean$WEIGHTLBTC_A,
   main = "Distribution of Weight Across Participants",
   col = "orangered",
   xlab = "Weight in Pounds",
@@ -61,7 +63,7 @@ ggplot(nhis_clean, aes(x = WEIGHTLBTC_A)) +
 
 ### Create base R and ggplot2 boxplots of WEIGHTLBTC_A
 boxplot(
-  WEIGHTLBTC_A,
+  nhis_clean$WEIGHTLBTC_A,
   main = "Distribution of Weight Across Participants",
   col = "rosybrown",
   ylab = "Weight in Pounds"
@@ -76,7 +78,7 @@ ggplot(nhis_clean, aes(y = WEIGHTLBTC_A)) +
 
 ### Create base r and ggplot2 histograms of HEIGHTTC_A
 hist(
-  HEIGHTTC_A,
+  nhis_clean$HEIGHTTC_A,
   main = "Distribution of Height Across Participants",
   col = "dodgerblue",
   xlab = "Height in Inches",
@@ -96,7 +98,7 @@ ggplot(nhis_clean, aes(x = HEIGHTTC_A)) +
 
 ### Create base R and ggplot2 boxplots of HEIGHTTC_A
 boxplot(
-  HEIGHTTC_A,
+  nhis_clean$HEIGHTTC_A,
   main = "Distribution of Height Across Participants",
   col = "mediumslateblue",
   ylab = "Height in Inches"
@@ -118,7 +120,7 @@ lapply(nhis_clean[c("SEX_A", "HISPALLP_A", "EDUCP_A", "PHSTAT_A", "LSATIS4R_A")]
 
 ### Display base R and ggplot 2 bar chart of SEX_A
 barplot(
-  table(SEX_A),
+  table(nhis_clean$SEX_A),
   names.arg = factor(c("Male", "Female")),
   xlab = "Sex",
   ylab = "Count",
@@ -141,7 +143,7 @@ ggplot(nhis_clean, aes(x = factor(
 
 ### Display base R and ggplot 2 bar chart of HISPALLP_A
 barplot(
-  table(HISPALLP_A),
+  table(nhis_clean$HISPALLP_A),
   names.arg = factor(
     c(
       "Hispanic",
@@ -186,27 +188,14 @@ ggplot(nhis_clean, aes(x = factor(
   theme(axis.text.x = element_text(size = 8))
 
 ### Display base R and ggplot 2 bar chart of EDUCP_A
-# ?
 barplot(
-  table(levels(EDUCP_A)),
-  names.arg = factor(
-    c(
-      "less
-than High School",
-      "High
-School Graduate",
-      "Some
-College Education",
-      "College
-Graduate or better"
-    )
-  ),
-  cex.names = .55,
-  xlab = "Educational Level",
-  ylab = "Count",
+  table(nhis_clean$EDUCP_A),
   col = heat.colors(4),
-  main = "Bar Chart of Participants Educational Level"
+  main = "Bar Chart of Participants' Educational Level",
+  xlab = "Educational Level",
+  ylab = "Count"
 )
+
 
 ggplot(nhis_clean, aes(x = EDUCP_A)) +
   geom_bar(fill = heat.colors(4), color = "black") +
@@ -218,15 +207,11 @@ ggplot(nhis_clean, aes(x = EDUCP_A)) +
 
 ### Display base R and ggplot 2 bar chart of PHSTAT_A
 barplot(
-  table(PHSTAT_A),
-  names.arg = factor(c(
-    "Excellent", "Very good", "Good", "Fair", "Poor"
-  )),
-  cex.names = .55,
-  xlab = "General Health Status",
-  ylab = "Count",
+  table(nhis_clean$PHSTAT_A),
   col = terrain.colors(5),
   main = "Bar Chart of Participants' General Health Status",
+  xlab = "General Health Status",
+  ylab = "Count",
   border = "black"
 )
 
@@ -244,7 +229,7 @@ ggplot(nhis_clean, aes(x = factor(
 ### Display base R and ggplot 2 bar chart of LSATIS4R_A
 
 barplot(
-  table(LSATIS4R_A),
+  table(nhis_clean$LSATIS4R_A),
   names.arg = factor(
     c(
       "Very Satisfied",
