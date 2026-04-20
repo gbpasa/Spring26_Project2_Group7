@@ -208,14 +208,13 @@ Graduate or better"
   main = "Bar Chart of Participants Educational Level"
 )
 
-# ?
 ggplot(nhis_clean, aes(x = EDUCP_A)) +
-  geom_bar(fill = "blue", color = "black") +
+  geom_bar(fill = heat.colors(4), color = "black") +
   ggtitle("Bar Chart of Participants' Educational Level") +
   xlab("Educational Level") +
   ylab("Count") +
   theme_classic() +
-  theme(axis.text.x = element_text(size = 1))
+  theme(axis.text.x = element_text(size = 6))
 
 ### Display base R and ggplot 2 bar chart of PHSTAT_A
 barplot(
