@@ -7,7 +7,7 @@ library(tidyverse)
 library(psych)
 
 # Read data
-nhis <- read_csv("NHIS _Data_2021.csv", show_col_types = FALSE)
+nhis_mv <- read_csv("data/nhis_clean.csv", show_col_types = FALSE)
 
 # Clean and prepare analysis variables
 nhis_mv <- nhis %>%
@@ -94,9 +94,9 @@ scatter_educp <- nhis_mv %>%
 print(scatter_educp)
 
 # Save plots
-ggsave("scatter_height_weight_by_sex_phstat.png", scatter_phstat,
+ggsave("output/scatter_height_weight_by_sex_phstat.png", scatter_phstat,
        width = 11, height = 7, dpi = 300)
-ggsave("scatter_height_weight_by_sex_educp.png", scatter_educp,
+ggsave("output/scatter_height_weight_by_sex_educp.png", scatter_educp,
        width = 11, height = 7, dpi = 300)
 
 # -------------------------------
