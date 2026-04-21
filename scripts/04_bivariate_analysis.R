@@ -7,6 +7,7 @@ boxplot(
     levels = c(1, 2),
     labels = c("Male", "Female")
   ) * EDUCP_A,
+  data = nhis_clean,
   main = "Distribution of Age by Sex and Education",
   xlab = "Education Level by Sex",
   ylab = "Age",
@@ -57,14 +58,14 @@ ggplot(nhis_clean, aes(
 ### Create a scatter plot (using both plot() and ggplot2) of HEIGHTTC_A vs. WEIGHTLBTC_A
 
 plot(
-  HEIGHTTC_A,
-  WEIGHTLBTC_A,
+  nhis_clean$HEIGHTTC_A,
+  nhis_clean$WEIGHTLBTC_A,
   pch = 19,
   col = "cyan4",
   main = "Scatterplot of Height vs. Weight",
   xlab = "Height in Inches",
   ylab = "Weight in Pounds"
-) 
+)
 
 ggplot(nhis_clean, aes(x= HEIGHTTC_A, y=WEIGHTLBTC_A))+
   geom_point(color="cyan4")+
@@ -73,4 +74,4 @@ ggplot(nhis_clean, aes(x= HEIGHTTC_A, y=WEIGHTLBTC_A))+
   ylab("Weight in Pounds")
 
 ### Calculate the correlation coefficient
-cor(HEIGHTTC_A, WEIGHTLBTC_A)
+cor(nhis_clean$HEIGHTTC_A, nhis_clean$WEIGHTLBTC_A)
