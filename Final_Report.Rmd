@@ -9,22 +9,18 @@ output: word_document
 ---
 
 ```{r setup, include=FALSE}
+# Load required packages
 library(tidyverse)
+library(summarytools)
 library(psych)
-
-nhis_clean <- read_csv("data/nhis_clean.csv")
 ```
 
-# Introduction
+```{r data-import}
+# Import the NHIS 2021 dataset
+nhis <- read_csv("data/NHIS _Data_2021.csv")
 
-
-# Methods
-
-
-# Results
-
-
-# Discussion
-
-
-# Conclusion
+# Explore the structure of the dataset
+str(nhis)
+summary(nhis)
+head(nhis)
+```
