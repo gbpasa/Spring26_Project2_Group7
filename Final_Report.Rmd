@@ -1,0 +1,30 @@
+---
+title: "NHIS 2021 Data Analysis"
+author: |
+  Alyssa Bautista 
+  Grant Pasamonte 
+  Jamie Rosas Jr
+  Group 7
+output: word_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(psych)
+
+nhis_clean <- read_csv("data/nhis_clean.csv")
+```
+
+# Introduction
+
+
+# Methods
+
+
+# Results
+
+
+# Discussion
+
+
+# Conclusion
