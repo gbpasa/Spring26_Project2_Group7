@@ -11,9 +11,10 @@ output: word_document
 ```{r setup, include=FALSE}
 # Load required packages
 library(tidyverse)
-library(summarytools)
 library(psych)
 ```
+
+## Script 1: Data Import
 
 ```{r data-import}
 # Import the NHIS 2021 dataset
@@ -23,4 +24,501 @@ nhis <- read_csv("data/NHIS _Data_2021.csv")
 str(nhis)
 summary(nhis)
 head(nhis)
+```
+
+## Script 2: Data Cleaning
+
+```{r script2-data-cleaning}
+# Select only the required variables
+nhis_selected <- nhis %>%
+  select(
+    AGEP_A,
+    WEIGHTLBTC_A,
+    HEIGHTTC_A,
+    SEX_A,
+    HISPALLP_A,
+    EDUCP_A,
+    PHSTAT_A,
+    LSATIS4R_A
+  )
+
+# Recode missing and nonresponse values as NA
+nhis_clean <- nhis_selected %>%
+  mutate(
+    AGEP_A = ifelse(AGEP_A %in% 97:99, NA, AGEP_A),
+    WEIGHTLBTC_A = ifelse(WEIGHTLBTC_A %in% 996:999, NA, WEIGHTLBTC_A),
+    HEIGHTTC_A = ifelse(HEIGHTTC_A %in% 96:99, NA, HEIGHTTC_A),
+    SEX_A = ifelse(SEX_A %in% c(7, 9), NA, SEX_A),
+    HISPALLP_A = ifelse(HISPALLP_A %in% 97:99, NA, HISPALLP_A),
+    EDUCP_A = ifelse(EDUCP_A %in% 97:99, NA, EDUCP_A),
+    PHSTAT_A = ifelse(PHSTAT_A %in% 7:9, NA, PHSTAT_A),
+    LSATIS4R_A = ifelse(LSATIS4R_A %in% 7:9, NA, LSATIS4R_A)
+  ) %>%
+  drop_na()
+
+# Recode EDUCP_A into four categories
+nhis_clean <- nhis_clean %>%
+  mutate(
+    EDUCP_A = case_when(
+      EDUCP_A %in% 0:3 ~ "Less than High School",
+      EDUCP_A == 4 ~ "High School Graduate",
+      EDUCP_A %in% 5:7 ~ "Some College Education",
+      EDUCP_A %in% 8:10 ~ "College Graduate or Better"
+    ),
+    EDUCP_A = factor(
+      EDUCP_A,
+      levels = c(
+        "Less than High School",
+        "High School Graduate",
+        "Some College Education",
+        "College Graduate or Better"
+      )
+    )
+  )
+
+# Save the cleaned dataset
+write_csv(nhis_clean, "data/nhis_clean.csv")
+
+# Check the cleaned data
+str(nhis_clean)
+summary(nhis_clean)
+head(nhis_clean)
+```
+
+## Script 3: Univariate Analysis
+
+```{r script3-summary-stats}
+# Summary statistics for quantitative variables
+summary(nhis_clean$AGEP_A)
+mean(nhis_clean$AGEP_A)
+median(nhis_clean$AGEP_A)
+sd(nhis_clean$AGEP_A)
+
+summary(nhis_clean$WEIGHTLBTC_A)
+mean(nhis_clean$WEIGHTLBTC_A)
+median(nhis_clean$WEIGHTLBTC_A)
+sd(nhis_clean$WEIGHTLBTC_A)
+
+summary(nhis_clean$HEIGHTTC_A)
+mean(nhis_clean$HEIGHTTC_A)
+median(nhis_clean$HEIGHTTC_A)
+sd(nhis_clean$HEIGHTTC_A)
+```
+
+```{r script3-age-plots}
+# Base R histogram of age
+hist(
+  nhis_clean$AGEP_A,
+  main = "Distribution of Age",
+  xlab = "Age in Years",
+  ylab = "Count",
+  col = "lightgreen"
+)
+
+# ggplot2 histogram of age
+ggplot(nhis_clean, aes(x = AGEP_A)) +
+  geom_histogram(binwidth = 2, fill = "green4", color = "black") +
+  labs(title = "Distribution of Age", x = "Age in Years", y = "Count") +
+  theme_classic()
+
+# Base R boxplot of age
+boxplot(
+  nhis_clean$AGEP_A,
+  main = "Boxplot of Age",
+  ylab = "Age in Years",
+  col = "yellow"
+)
+
+# ggplot2 boxplot of age
+ggplot(nhis_clean, aes(y = AGEP_A)) +
+  geom_boxplot(fill = "gold") +
+  labs(title = "Boxplot of Age", y = "Age in Years") +
+  theme_minimal()
+```
+
+```{r script3-weight-plots}
+# Base R histogram of weight
+hist(
+  nhis_clean$WEIGHTLBTC_A,
+  main = "Distribution of Weight",
+  xlab = "Weight in Pounds",
+  ylab = "Count",
+  col = "orangered"
+)
+
+# ggplot2 histogram of weight
+ggplot(nhis_clean, aes(x = WEIGHTLBTC_A)) +
+  geom_histogram(binwidth = 5, fill = "orangered3", color = "black") +
+  labs(title = "Distribution of Weight", x = "Weight in Pounds", y = "Count") +
+  theme_classic()
+
+# Base R boxplot of weight
+boxplot(
+  nhis_clean$WEIGHTLBTC_A,
+  main = "Boxplot of Weight",
+  ylab = "Weight in Pounds",
+  col = "rosybrown"
+)
+
+# ggplot2 boxplot of weight
+ggplot(nhis_clean, aes(y = WEIGHTLBTC_A)) +
+  geom_boxplot(fill = "lightpink4") +
+  labs(title = "Boxplot of Weight", y = "Weight in Pounds") +
+  theme_minimal()
+```
+
+```{r script3-height-plots}
+# Base R histogram of height
+hist(
+  nhis_clean$HEIGHTTC_A,
+  main = "Distribution of Height",
+  xlab = "Height in Inches",
+  ylab = "Count",
+  col = "dodgerblue"
+)
+
+# ggplot2 histogram of height
+ggplot(nhis_clean, aes(x = HEIGHTTC_A)) +
+  geom_histogram(binwidth = 1, fill = "dodgerblue4", color = "black") +
+  labs(title = "Distribution of Height", x = "Height in Inches", y = "Count") +
+  theme_classic()
+
+# Base R boxplot of height
+boxplot(
+  nhis_clean$HEIGHTTC_A,
+  main = "Boxplot of Height",
+  ylab = "Height in Inches",
+  col = "mediumslateblue"
+)
+
+# ggplot2 boxplot of height
+ggplot(nhis_clean, aes(y = HEIGHTTC_A)) +
+  geom_boxplot(fill = "slateblue4") +
+  labs(title = "Boxplot of Height", y = "Height in Inches") +
+  theme_minimal()
+```
+
+```{r script3-frequency-tables}
+# Frequency tables for qualitative variables
+table(nhis_clean$SEX_A)
+table(nhis_clean$HISPALLP_A)
+table(nhis_clean$EDUCP_A)
+table(nhis_clean$PHSTAT_A)
+table(nhis_clean$LSATIS4R_A)
+```
+
+```{r script3-sex-barplots}
+# Base R barplot for sex
+barplot(
+  table(nhis_clean$SEX_A),
+  names.arg = c("Male", "Female"),
+  xlab = "Sex",
+  ylab = "Count",
+  col = topo.colors(2),
+  main = "Bar Chart of Sex",
+  border = "black"
+)
+
+# ggplot2 barplot for sex
+ggplot(nhis_clean, aes(x = factor(SEX_A, levels = c(1, 2), labels = c("Male", "Female")))) +
+  geom_bar(fill = "steelblue", color = "black") +
+  labs(title = "Bar Chart of Sex", x = "Sex", y = "Count") +
+  theme_classic()
+```
+
+```{r script3-race-barplots}
+# Base R barplot for race and ethnicity
+barplot(
+  table(nhis_clean$HISPALLP_A),
+  names.arg = c(
+    "Hispanic",
+    "NH White",
+    "NH Black",
+    "NH Asian",
+    "NH AIAN",
+    "NH AIAN + Other",
+    "Other/Multiple"
+  ),
+  cex.names = 0.7,
+  xlab = "Race/Ethnicity",
+  ylab = "Count",
+  col = rainbow(7),
+  main = "Bar Chart of Race/Ethnicity",
+  border = "black"
+)
+
+# ggplot2 barplot for race and ethnicity
+ggplot(nhis_clean, aes(x = factor(
+  HISPALLP_A,
+  levels = c(1, 2, 3, 4, 5, 6, 7),
+  labels = c(
+    "Hispanic",
+    "NH White",
+    "NH Black",
+    "NH Asian",
+    "NH AIAN",
+    "NH AIAN + Other",
+    "Other/Multiple"
+  )
+))) +
+  geom_bar(fill = "steelblue", color = "black") +
+  labs(title = "Bar Chart of Race/Ethnicity", x = "Race/Ethnicity", y = "Count") +
+  theme_classic() +
+  theme(axis.text.x = element_text(size = 8))
+```
+
+```{r script3-educ-barplots}
+# Base R barplot for education
+barplot(
+  table(nhis_clean$EDUCP_A),
+  xlab = "Educational Level",
+  ylab = "Count",
+  col = heat.colors(4),
+  main = "Bar Chart of Educational Level",
+  border = "black"
+)
+
+# ggplot2 barplot for education
+ggplot(nhis_clean, aes(x = EDUCP_A)) +
+  geom_bar(fill = "steelblue", color = "black") +
+  labs(title = "Bar Chart of Educational Level", x = "Educational Level", y = "Count") +
+  theme_classic() +
+  theme(axis.text.x = element_text(size = 8))
+```
+
+```{r script3-health-barplots}
+# Base R barplot for general health status
+barplot(
+  table(nhis_clean$PHSTAT_A),
+  names.arg = c("Excellent", "Very good", "Good", "Fair", "Poor"),
+  xlab = "General Health Status",
+  ylab = "Count",
+  col = terrain.colors(5),
+  main = "Bar Chart of General Health Status",
+  border = "black"
+)
+
+# ggplot2 barplot for general health status
+ggplot(nhis_clean, aes(x = factor(
+  PHSTAT_A,
+  levels = c(1, 2, 3, 4, 5),
+  labels = c("Excellent", "Very good", "Good", "Fair", "Poor")
+))) +
+  geom_bar(fill = "steelblue", color = "black") +
+  labs(title = "Bar Chart of General Health Status", x = "General Health Status", y = "Count") +
+  theme_classic()
+```
+
+```{r script3-life-barplots}
+# Base R barplot for life satisfaction
+barplot(
+  table(nhis_clean$LSATIS4R_A),
+  names.arg = c("Very Satisfied", "Satisfied", "Dissatisfied", "Very Dissatisfied"),
+  xlab = "Life Satisfaction",
+  ylab = "Count",
+  col = cm.colors(4),
+  main = "Bar Chart of Life Satisfaction",
+  border = "black"
+)
+
+# ggplot2 barplot for life satisfaction
+ggplot(nhis_clean, aes(x = factor(
+  LSATIS4R_A,
+  levels = c(1, 2, 3, 4),
+  labels = c("Very Satisfied", "Satisfied", "Dissatisfied", "Very Dissatisfied")
+))) +
+  geom_bar(fill = "steelblue", color = "black") +
+  labs(title = "Bar Chart of Life Satisfaction", x = "Life Satisfaction", y = "Count") +
+  theme_classic()
+```
+
+## Script 4: Bivariate Analysis
+
+```{r script4-age-sex-boxplot}
+# Base R boxplot of age by sex
+boxplot(
+  AGEP_A ~ factor(SEX_A, levels = c(1, 2), labels = c("Male", "Female")),
+  data = nhis_clean,
+  main = "Distribution of Age by Sex",
+  xlab = "Sex",
+  ylab = "Age",
+  col = c("mediumseagreen", "mediumslateblue")
+)
+
+# ggplot2 boxplot of age by sex
+ggplot(nhis_clean, aes(
+  x = factor(SEX_A, levels = c(1, 2), labels = c("Male", "Female")),
+  y = AGEP_A
+)) +
+  geom_boxplot(fill = "skyblue") +
+  labs(title = "Distribution of Age by Sex", x = "Sex", y = "Age") +
+  theme_classic()
+```
+
+```{r script4-age-educ-boxplot}
+# Base R boxplot of age by education level
+boxplot(
+  AGEP_A ~ EDUCP_A,
+  data = nhis_clean,
+  main = "Distribution of Age by Education Level",
+  xlab = "Education Level",
+  ylab = "Age",
+  col = "lightblue",
+  las = 1,
+  cex.axis = 0.8
+)
+
+# ggplot2 boxplot of age by education level and sex
+ggplot(nhis_clean, aes(
+  x = EDUCP_A,
+  y = AGEP_A,
+  fill = factor(SEX_A, levels = c(1, 2), labels = c("Male", "Female"))
+)) +
+  geom_boxplot() +
+  ggtitle("Distribution of Age by Sex and Education") +
+  xlab("Education Level") +
+  ylab("Age") +
+  scale_fill_manual(values = c("mediumseagreen", "mediumslateblue"), name = "Sex") +
+  theme_minimal()
+```
+
+```{r script4-clustered-bar}
+# Clustered bar chart of general health status and life satisfaction
+ggplot(nhis_clean, aes(
+  x = factor(
+    PHSTAT_A,
+    levels = c(1, 2, 3, 4, 5),
+    labels = c("Excellent", "Very good", "Good", "Fair", "Poor")
+  ),
+  fill = factor(
+    LSATIS4R_A,
+    levels = c(1, 2, 3, 4),
+    labels = c("Very Satisfied", "Satisfied", "Dissatisfied", "Very Dissatisfied")
+  )
+)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Life Satisfaction by General Health Status",
+    x = "General Health Status",
+    y = "Count",
+    fill = "Life Satisfaction"
+  ) +
+  theme_minimal()
+```
+
+```{r script4-scatter-correlation}
+# Base R scatterplot of height and weight
+plot(
+  nhis_clean$HEIGHTTC_A,
+  nhis_clean$WEIGHTLBTC_A,
+  pch = 19,
+  col = "cyan4",
+  main = "Scatterplot of Height vs. Weight",
+  xlab = "Height in Inches",
+  ylab = "Weight in Pounds"
+)
+
+# ggplot2 scatterplot of height and weight
+ggplot(nhis_clean, aes(x = HEIGHTTC_A, y = WEIGHTLBTC_A)) +
+  geom_point(color = "cyan4") +
+  ggtitle("Scatterplot of Height vs. Weight") +
+  xlab("Height in Inches") +
+  ylab("Weight in Pounds") +
+  theme_minimal()
+
+# Correlation coefficient
+cor(nhis_clean$HEIGHTTC_A, nhis_clean$WEIGHTLBTC_A)
+```
+
+## Script 5: Multivariate Analysis
+
+```{r script5-scatter-phstat}
+# Enhanced scatterplot colored by sex and faceted by general health status
+scatter_phstat <- ggplot(
+  nhis_clean,
+  aes(
+    x = HEIGHTTC_A,
+    y = WEIGHTLBTC_A,
+    color = factor(SEX_A, levels = c(1, 2), labels = c("Male", "Female"))
+  )
+) +
+  geom_point(alpha = 0.6, size = 2) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.8) +
+  facet_wrap(~ PHSTAT_A) +
+  labs(
+    title = "Weight vs. Height by Sex, Faceted by General Health Status",
+    x = "Height (inches)",
+    y = "Weight (pounds)",
+    color = "Sex"
+  ) +
+  theme_minimal()
+
+scatter_phstat
+```
+
+```{r script5-scatter-educ}
+# Enhanced scatterplot colored by sex and faceted by education level
+scatter_educp <- ggplot(
+  nhis_clean,
+  aes(
+    x = HEIGHTTC_A,
+    y = WEIGHTLBTC_A,
+    color = factor(SEX_A, levels = c(1, 2), labels = c("Male", "Female"))
+  )
+) +
+  geom_point(alpha = 0.6, size = 2) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.8) +
+  facet_wrap(~ EDUCP_A) +
+  labs(
+    title = "Weight vs. Height by Sex, Faceted by Education Level",
+    x = "Height (inches)",
+    y = "Weight (pounds)",
+    color = "Sex"
+  ) +
+  theme_minimal()
+
+scatter_educp
+```
+
+```{r script5-save-plots}
+# Save multivariate scatterplots to the output folder
+ggsave("output/scatter_height_weight_by_sex_phstat.png", scatter_phstat,
+       width = 11, height = 7, dpi = 300)
+
+ggsave("output/scatter_height_weight_by_sex_educp.png", scatter_educp,
+       width = 11, height = 7, dpi = 300)
+```
+
+```{r script5-pairs-panels}
+# Create a correlation scatterplot matrix for age, weight, and height
+corr_data <- nhis_clean %>%
+  select(AGEP_A, WEIGHTLBTC_A, HEIGHTTC_A) %>%
+  drop_na()
+
+pairs.panels(
+  corr_data,
+  method = "pearson",
+  hist.col = "lightblue",
+  density = TRUE,
+  ellipses = TRUE,
+  lm = TRUE,
+  main = "Correlation Scatter Plot Matrix: Age, Weight, and Height"
+)
+```
+
+```{r script5-save-pairs}
+# Save the correlation scatterplot matrix to the output folder
+png("output/pairs_panels_age_weight_height.png", width = 1200, height = 1200, res = 150)
+
+pairs.panels(
+  corr_data,
+  method = "pearson",
+  hist.col = "lightblue",
+  density = TRUE,
+  ellipses = TRUE,
+  lm = TRUE,
+  main = "Correlation Scatter Plot Matrix: Age, Weight, and Height"
+)
+
+dev.off()
 ```
