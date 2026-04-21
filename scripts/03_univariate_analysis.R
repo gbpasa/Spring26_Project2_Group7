@@ -7,6 +7,7 @@ library(summarytools)
 
 ### Display summary statistics of the quantitative variables: AGEP_A, WEIGHTLBTC_A, and HEIGHTTC_A
 lapply(nhis_clean[c("AGEP_A", "WEIGHTLBTC_A", "HEIGHTTC_A")], descr)
+
 summary(nhis_clean$AGEP_A)
 mean(nhis_clean$AGEP_A)
 median(nhis_clean$AGEP_A)
@@ -211,7 +212,7 @@ barplot(
 )
 
 
-ggplot(nhis_clean, aes(x = EDUCP_A)) +
+ggplot(nhis_clean, aes(x =EDUCP_A)) +
   geom_bar(fill = heat.colors(4), color = "black") +
   ggtitle("Bar Chart of Participants' Educational Level") +
   xlab("Educational Level") +
@@ -222,6 +223,13 @@ ggplot(nhis_clean, aes(x = EDUCP_A)) +
 ### Display base R and ggplot 2 bar chart of PHSTAT_A
 barplot(
   table(nhis_clean$PHSTAT_A),
+  names.arg = factor(c(
+    "Excellent",
+    "Very good",
+    "Good", 
+    "Fair", 
+    "Poor"
+  )),
   col = terrain.colors(5),
   main = "Bar Chart of Participants' General Health Status",
   xlab = "General Health Status",
@@ -274,3 +282,4 @@ ggplot(nhis_clean, aes(x = factor(
   xlab("Quality of Life ") +
   ylab("Count") +
   theme_classic()
+
